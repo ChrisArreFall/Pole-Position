@@ -39,7 +39,7 @@ public class Play extends BasicGameState{
 	public int cary1 = 0;
 	public float scalecar1 = 1f;
 	//posicion del servidor
-	public int posCar1 = 20000;
+	public int posCar1 = 0;
 	
 	public int car2;
 	public Image car2PNG;
@@ -57,8 +57,15 @@ public class Play extends BasicGameState{
 	//posicion del servidor
 	public int posCar3 = 80000;
 	
+	public int contador=0;
+	
+	Vector<Line> lines;
+	
+	int N;
+	
 	
 	public Play(int state) {
+
 		
 	}
 
@@ -67,15 +74,7 @@ public class Play extends BasicGameState{
 		Image carrosPNG = new Image("res/carros.png");
 		carros = new SpriteSheet(carrosPNG,42,43);
 		
-		
-		
-	}
-
-	@Override
-	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
-		gc.setTargetFrameRate(60);
-		
-		Vector<Line> lines = new Vector<Line>();
+		lines = new Vector<Line>();
 		for(int i=0;i<trackSize;i++) {
 			Line line = new Line();
 		    line.z = i*segL;
@@ -93,9 +92,52 @@ public class Play extends BasicGameState{
 		    lines.add(line);
 		    
 		}
-		int N = lines.size();
+		N = lines.size();
 		
 		
+		
+		new Thread(new Runnable() {
+			int curva=0;
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				while(posCar1<=600000) {
+					posCar1+=(velocidad*3);
+					
+					int indexLines=posCar1/200%N;
+					Line line = lines.get(indexLines);
+					
+					cary1=(int)line.Y;
+					//scalecar1=3.2f*(7000-Math.abs(pos-posCar1))/6000;
+					if(line.curve==0) {
+						curva=0;
+					}else {
+						curva=(int)line.W/2;
+					}
+					
+					
+					carx1=(int) (line.X -curva);
+					
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			
+		}).start();	
+
+		
+		
+		
+	}
+
+	@Override
+	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
+		gc.setTargetFrameRate(60);
+			
 		while(pos>=N*segL) pos-=N*segL;
 		while(pos<0)pos+=N*segL;
 		
@@ -107,6 +149,8 @@ public class Play extends BasicGameState{
 		for(int n = startPos;n<startPos+300;n++) {
 			Line l = new Line();
 			l = lines.get(n%N);
+			
+			
 			int t;
 			if(n>=N)
 				t= N*segL;
@@ -135,6 +179,7 @@ public class Play extends BasicGameState{
 				road = new Color(105,105,105);
 			
 			Line p = new Line();
+			Number num = Math.floorMod(n-1,N);
 			p = lines.get(Math.floorMod(n-1,N));
 			
 			grassS = drawQuad(0,(int)p.Y,width,0,(int)l.Y,width);
@@ -151,34 +196,21 @@ public class Play extends BasicGameState{
 			g.setColor(road);
 			g.fill(roadS);
 			g.draw(roadS);
+			
 		}
 		
 		
 		
-		
-		//car1PNG = carros.getSubImage(1, 1);
-		//car2PNG = carros.getSubImage(1, 3);
-		//car3PNG = carros.getSubImage(1, 7);
-
-		
-		//car1PNG.draw(carx1, cary1, scalecar1);
-		//car1PNG.draw(carx2, cary2, scalecar2);
-		//car1PNG.draw(carx3, cary3, scalecar3);
-		
 		//jugador 1 2 y 3
 		carros.getSubImage(1, 1).draw(carx1, cary1, scalecar1);
-		carros.getSubImage(1, 3).draw(carx2, cary2, scalecar2);
-		carros.getSubImage(1, 5).draw(carx3, cary3, scalecar3);
+		//carros.getSubImage(1, 3).draw(carx2, cary2, scalecar2);
+		//carros.getSubImage(1, 5).draw(carx3, cary3, scalecar3);
 		
 		//jugador principal
 		carros.getSubImage(dirrection, carColor).draw(width/2-(3*42/2), height-(43*3),3f);
+
 		
 		
-		
-		Image bg2= new Image("res/img/bg.png");
-		g.drawImage(bg2,0,0);
-		Image bg3= new Image("res/img/bg.png");
-		g.drawImage(bg3,768,0);
 	}
 
 	@Override
@@ -190,10 +222,9 @@ public class Play extends BasicGameState{
 			pos+=temp;
 			if(playerX<1950&&playerX>-1950&&aceleracion<=2) {
 				aceleracion+=0.01;
-				System.out.print("Aceleracion: " + aceleracion + "\n");
-				System.out.print("PosX: " + playerX + "\n");
+			
 			}
-			System.out.print("Posicion: " + pos + "\n");
+		
 		}
 		if(input.isKeyDown(Input.KEY_DOWN)) {
 			dirrection = 1;
@@ -201,90 +232,45 @@ public class Play extends BasicGameState{
 		}
 		if((!input.isKeyDown(Input.KEY_UP)&&aceleracion!=0)||(playerX>1950||playerX<-1950)) {
 			dirrection = 1;
-			System.out.println("deteniendo!!!");
+	
 			pos+=temp;
 			if(aceleracion>0) {
 				aceleracion-=0.13;
-				System.out.print("Aceleracion: " + aceleracion + "\n");
-				System.out.print("PosX: " + playerX + "\n");
+
 			}
 			if(aceleracion<0) {
 				aceleracion=0;
 			}
-			System.out.print("Posicion: " + pos + "\n");
 		}
 		
 		if(input.isKeyDown(Input.KEY_RIGHT)&&playerX<2000) {
 			playerX+=50;
 			dirrection = 2;
-			carx1-=50*scalecar1;
-			carx2-=50*scalecar2;
-			carx3-=50*scalecar3;
-			System.out.println("carx1: "+carx1);
+			//carx1-=30*scalecar1;
 		}
 			
 		if(input.isKeyDown(Input.KEY_LEFT)&&playerX>-2000) {
 			playerX-=50;
 			dirrection = 0;
-			carx1+=50*scalecar1;
-			carx2+=50*scalecar2;
-			carx3+=50*scalecar3;
-			System.out.println("carx1: "+carx1);
+			//carx1+=30*scalecar1;
 		}
 		if(input.isKeyDown(Input.KEY_SPACE)) {
 			//Shape disparo = new Shape();
 		}
-		//pruebas de carros
-		if(input.isKeyDown(Input.KEY_W)) {
-			posCar1+=100;
+		
+		
+		if(pos<posCar1) {
+			//System.out.println("PosCar1: " + posCar1/segL);
+			float factor=(300-(float)(posCar1-pos)/segL)/(300);
+			scalecar1=2f*factor;
 			
-			//car1PNG.draw(carx1, cary1, scalecar1);
 		}
-		if(input.isKeyDown(Input.KEY_S)) {
-			posCar1-=100;
+		if(posCar1<pos) {
+			cary1=0;
+			carx1=0;
+			scalecar1=3f;
 		}
-		//imprimir carro 1
-		if(Math.abs(pos-posCar1)<7000) {
-			if(pos<posCar1) {
-				System.out.println("PosCar1: " + posCar1);
-				cary1=350+350*(7000-Math.abs(pos-posCar1))/7000;
-				scalecar1=3.2f*(7000-Math.abs(pos-posCar1))/6000;
-				carx1=width/2;
-			}
-			if(posCar1<pos) {
-				cary1=0;
-				carx1=width/2;
-				scalecar1=1f;
-			}
-		}
-		//imprimir carro 2
-		if(Math.abs(pos-posCar2)<7000) {
-			if(pos<posCar2) {
-				System.out.println("PosCar2: " + posCar2);
-				cary2=350+350*(7000-Math.abs(pos-posCar2))/7000;
-				scalecar2=3.2f*(7000-Math.abs(pos-posCar2))/6000;
-				carx2=width/2;
-			}
-			if(posCar2<pos) {
-				cary2=0;
-				carx2=width/2;
-				scalecar2=1f;
-			}
-		}
-		//imprimir carro 3
-		if(Math.abs(pos-posCar3)<7000) {
-			if(pos<posCar3) {
-				System.out.println("PosCar3: " + posCar3);
-				cary3=350+350*(7000-Math.abs(pos-posCar3))/7000;
-				scalecar3=3.2f*(7000-Math.abs(pos-posCar3))/6000;
-				carx3=width/2;
-			}
-			if(posCar3<pos) {
-				cary3=0;
-				carx3=width/2;
-				scalecar3 = 1f;
-			}
-		}
+		
 	}
 
 	@Override
@@ -309,6 +295,7 @@ public class Play extends BasicGameState{
 		    X = (1 + scale*(x - camX)) * width/2;
 		    Y = (1 - scale*(y - camY)) * height/2;
 		    W = scale * roadW  * width/2;
+		    System.out.println("w "+W);
 		 }
 
 		 
