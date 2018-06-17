@@ -3,61 +3,62 @@ package ac.itcr.game;
 import java.util.Vector;
 
 import org.newdawn.slick.*;
-import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.state.*;
 
+import ac.itcr.game.gfx.Draw;
+
 public class Play extends BasicGameState{
-	public static int camH = 1500;
-	public static int roadW = 2000;
-	public static int segL = 200;
-	public static int trackSize = 3000;
-	public static int curveSize = 400/2;
+	public static final Integer camH = 1500;
+	public static final Integer roadW = 2000;
+	public static final Integer segL = 200;
+	public static final Integer trackSize = 3000;
+	public static final Integer curveSize = 400/2;
 	
-	public static float camD = (float) 0.84;
-	public static int width = Game.width;
-	public static int height = Game.height;
+	public static Float camD = (float) 0.84;
+	public static Integer width = Game.width;
+	public static Integer height = Game.height;
 	
 	public Shape grassS;
 	public Shape rumbleS;
 	public Shape roadS;
 	
-	public int pos = 0;
-	public int playerX = 0;
+	public Integer pos = 0;
+	public Integer playerX = 0;
 	
 	public double aceleracion = 0;
-	public static int velocidad = 100;
+	public static Integer velocidad = 100;
 	
 	public SpriteSheet carros;
-	public int dirrection = 1;
-	public int carColor = 0;
+	public Integer dirrection = 1;
+	public Integer carColor = 0;
 	
 	
-	public int car1;
+	public Integer car1;
 	public Image car1PNG;
-	public int carx1 = 0;
-	public int cary1 = 0;
-	public float scalecar1 = 1f;
+	public Integer carx1 = 0;
+	public Integer cary1 = 0;
+	public Float scalecar1 = 1f;
 	//posicion del servidor
-	public int posCar1 = 0;
+	public Integer posCar1 = 0;
 	
-	public int car2;
+	public Integer car2;
 	public Image car2PNG;
-	public int carx2 = 50;
-	public int cary2 = 0;
-	public float scalecar2 = 1f;
+	public Integer carx2 = 50;
+	public Integer cary2 = 0;
+	public Float scalecar2 = 1f;
 	//posicion del servidor
-	public int posCar2 = 60000;
+	public Integer posCar2 = 60000;
 	
-	public int car3;
+	public Integer car3;
 	public Image car3PNG;
-	public int carx3 = 100;
-	public int cary3 = 0;
-	public float scalecar3 = 1f;
+	public Integer carx3 = 100;
+	public Integer cary3 = 0;
+	public Float scalecar3 = 1f;
 	//posicion del servidor
-	public int posCar3 = 80000;
+	public Integer posCar3 = 80000;
 	
-	public int contador=0;
+	public Integer contador=0;
 	
 	Vector<Line> lines;
 	
@@ -179,20 +180,24 @@ public class Play extends BasicGameState{
 				road = new Color(105,105,105);
 			
 			Line p = new Line();
-			Number num = Math.floorMod(n-1,N);
+			//Number num = Math.floorMod(n-1,N);
 			p = lines.get(Math.floorMod(n-1,N));
+			Draw draw = new Draw();
 			
-			grassS = drawQuad(0,(int)p.Y,width,0,(int)l.Y,width);
+			grassS = draw.drawQuad(0,(int)p.Y,width,0,(int)l.Y,width);
+			draw.clear();
 			g.setColor(grass);
 			g.fill(grassS);
 			g.draw(grassS);
 			
-			rumbleS = drawQuad((int)p.X,(int)p.Y,(int)(p.W*1.2),(int)l.X,(int)l.Y,(int)(l.W*1.2));
+			rumbleS = draw.drawQuad((int)p.X,(int)p.Y,(int)(p.W*1.2),(int)l.X,(int)l.Y,(int)(l.W*1.2));
+			draw.clear();
 			g.setColor(rumble);
 			g.fill(rumbleS);
 			g.draw(rumbleS);
 			
-			roadS = drawQuad((int)p.X,(int)p.Y,(int)p.W,(int)l.X,(int)l.Y,(int)l.W);
+			roadS = draw.drawQuad((int)p.X,(int)p.Y,(int)p.W,(int)l.X,(int)l.Y,(int)l.W);
+			draw.clear();
 			g.setColor(road);
 			g.fill(roadS);
 			g.draw(roadS);
@@ -304,13 +309,6 @@ public class Play extends BasicGameState{
 		
 	}
 	
-	public Polygon drawQuad(int x1,int y1,int w1,int x2,int y2,int w2) {
-		Polygon shape = new Polygon();
-	    shape.addPoint(x1-w1,y1);
-	    shape.addPoint(x2-w2,y2);
-	    shape.addPoint(x2+w2,y2);
-	    shape.addPoint(x1+w1,y1);
-	    return shape;
-	}
+	
 
 }
