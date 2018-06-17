@@ -154,10 +154,7 @@ public class Play extends BasicGameState{
 		}
 		
 		
-		//Image bg2= new Image("res/img/bg.png");
-		//g.drawImage(bg2,0,0);
-		//Image bg3= new Image("res/img/bg.png");
-		//g.drawImage(bg3,768,0);
+		
 		
 		//car1PNG = carros.getSubImage(1, 1);
 		//car2PNG = carros.getSubImage(1, 3);
@@ -178,7 +175,10 @@ public class Play extends BasicGameState{
 		
 		
 		
-		
+		Image bg2= new Image("res/img/bg.png");
+		g.drawImage(bg2,0,0);
+		Image bg3= new Image("res/img/bg.png");
+		g.drawImage(bg3,768,0);
 	}
 
 	@Override
@@ -217,13 +217,19 @@ public class Play extends BasicGameState{
 		if(input.isKeyDown(Input.KEY_RIGHT)&&playerX<2000) {
 			playerX+=50;
 			dirrection = 2;
-			//carx1-=30*scalecar1;
+			carx1-=50*scalecar1;
+			carx2-=50*scalecar2;
+			carx3-=50*scalecar3;
+			System.out.println("carx1: "+carx1);
 		}
 			
 		if(input.isKeyDown(Input.KEY_LEFT)&&playerX>-2000) {
 			playerX-=50;
 			dirrection = 0;
-			//carx1+=30*scalecar1;
+			carx1+=50*scalecar1;
+			carx2+=50*scalecar2;
+			carx3+=50*scalecar3;
+			System.out.println("carx1: "+carx1);
 		}
 		if(input.isKeyDown(Input.KEY_SPACE)) {
 			//Shape disparo = new Shape();
@@ -235,10 +241,7 @@ public class Play extends BasicGameState{
 			//car1PNG.draw(carx1, cary1, scalecar1);
 		}
 		if(input.isKeyDown(Input.KEY_S)) {
-			cary1+=20;
-			scalecar1+=0.2;
-			
-			//car1PNG.draw(carx1, cary1, scalecar1);
+			posCar1-=100;
 		}
 		//imprimir carro 1
 		if(Math.abs(pos-posCar1)<7000) {
@@ -250,7 +253,7 @@ public class Play extends BasicGameState{
 			}
 			if(posCar1<pos) {
 				cary1=0;
-				carx1=0;
+				carx1=width/2;
 				scalecar1=1f;
 			}
 		}
@@ -264,7 +267,7 @@ public class Play extends BasicGameState{
 			}
 			if(posCar2<pos) {
 				cary2=0;
-				carx2=0;
+				carx2=width/2;
 				scalecar2=1f;
 			}
 		}
@@ -278,12 +281,10 @@ public class Play extends BasicGameState{
 			}
 			if(posCar3<pos) {
 				cary3=0;
-				carx3=0;
+				carx3=width/2;
 				scalecar3 = 1f;
 			}
 		}
-		
-			
 	}
 
 	@Override
