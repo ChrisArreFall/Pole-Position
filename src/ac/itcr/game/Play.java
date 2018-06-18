@@ -9,6 +9,7 @@ import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.state.*;
 import ac.itcr.game.sprites.*;
 
+
 public class Play extends BasicGameState{
 	public static Integer camH = 1500;
 	public static Integer roadW = 2000;
@@ -67,14 +68,14 @@ public class Play extends BasicGameState{
 		}
 		linesN = lines.size();
 		
-		Image poderesPng = new Image("res/carros.png");
-		poderesSpriteSheet = new SpriteSheet(poderesPng,42,43);
+		Image poderesPng = new Image("res/types.png");
+		poderesSpriteSheet = new SpriteSheet(poderesPng,1080,160);
 		
 		//se crean los poderes
 		poderes = new Sprite[]{
-			new Hueco(poderesSpriteSheet.getSubImage(1, 6),0,false),
-			new Turbo(poderesSpriteSheet.getSubImage(1, 7),0,false),
-			new Vida(poderesSpriteSheet.getSubImage(1, 8),0,false),
+			new Hueco(poderesSpriteSheet.getSubImage(0, 2),20000,true),
+			new Turbo(poderesSpriteSheet.getSubImage(0, 1),0,false),
+			new Vida(poderesSpriteSheet.getSubImage(0, 0),0,false),
 			
 		};
 		
@@ -84,8 +85,8 @@ public class Play extends BasicGameState{
 		//se crean los jugadores secundarios
 		jugadoresSec = new Jugador[] {
 				new Jugador(carrosSpriteSheet.getSubImage(1, 1),0,true),
-				new Jugador(carrosSpriteSheet.getSubImage(1, 2),0,false),
-				new Jugador(carrosSpriteSheet.getSubImage(1, 3),0,false)				
+				new Jugador(carrosSpriteSheet.getSubImage(1, 3),0,false),
+				new Jugador(carrosSpriteSheet.getSubImage(1, 5),0,false)				
 		};
 		
 		sprites = new ArrayList<Sprite>();
@@ -175,8 +176,13 @@ public class Play extends BasicGameState{
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
 		gc.setTargetFrameRate(60);
 			
-		while(jugadorPrincipal.getPosition()>=linesN*segL) jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() - linesN*segL);
-		while(jugadorPrincipal.getPosition()<0)jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() + linesN*segL);
+		while(jugadorPrincipal.getPosition()>=linesN*segL) 
+			
+			jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() - linesN*segL);
+		
+		while(jugadorPrincipal.getPosition()<0)
+			
+			jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() + linesN*segL);
 		
 		int startPos = jugadorPrincipal.getPosition()/segL;
 		float x=0,dx=0;
@@ -236,15 +242,20 @@ public class Play extends BasicGameState{
 			
 		}
 		
-				
-		//jugador principal
-		jugadorPrincipal.icon=carrosSpriteSheet.getSubImage(dirrection, carColor);
-		jugadorPrincipal.icon.draw(width/2-(3*42/2), height-(43*3),3f);
 		
 		//dibuja los poderes
 		for (Sprite poder : poderes) {
-			poder.icon.draw(poder.getCoordX(), poder.getCoordY(),1f);
+			poder.icon.draw(poder.getCoordX()-500, poder.getCoordY(),1f);
 		}
+		//dibuja los Huecos
+		for (Sprite poder : poderes) {
+			poder.icon.draw(poder.getCoordX()-500, poder.getCoordY(),1f);
+		}
+		//dibuja los Turbos
+		for (Sprite poder : poderes) {
+			poder.icon.draw(poder.getCoordX()-500, poder.getCoordY(),1f);
+		}
+				
 		
 		//dibuja los jugadores
 		for (Jugador jugadorSec : jugadoresSec) {
@@ -253,6 +264,10 @@ public class Play extends BasicGameState{
 			}
 		}
 
+		//jugador principal
+		jugadorPrincipal.icon=carrosSpriteSheet.getSubImage(dirrection, carColor);
+		jugadorPrincipal.icon.draw(width/2-(3*42/2), height-(43*3),3f);
+				
 		
 		
 	}
@@ -320,7 +335,6 @@ public class Play extends BasicGameState{
 			}
 		}
 		
-
 		
 	}
 
