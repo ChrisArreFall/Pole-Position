@@ -4,7 +4,7 @@ import org.newdawn.slick.Image;
 
 public class Jugador extends Sprite {
 	
-	public static final Float MAX_ACC =1.5f;
+	public static final Float MAX_ACC =2f;
 	
 	public Jugador(Image image, Integer position, Boolean activo) {
 		super(image, position, activo);
@@ -42,7 +42,9 @@ public class Jugador extends Sprite {
 			jugador.vidas--;
 			vidas--;
 			System.out.println("colision");
-			
+			if(vidas<=0) {
+				vidas=0;
+			}
 		}
 	}
 

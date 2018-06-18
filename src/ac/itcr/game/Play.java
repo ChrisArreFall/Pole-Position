@@ -9,10 +9,11 @@ import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.state.*;
 import ac.itcr.game.sprites.*;
 import java.awt.Font;
-import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.Graphics;
 
 public class Play extends BasicGameState{
+	private float gameoverY = 700;
+	private float gameoverX = 1024;
 	public static Integer camH = 1500;
 	public static Integer roadW = 2000;
 	public static Integer segL = 200;
@@ -84,7 +85,8 @@ public class Play extends BasicGameState{
 		//se crea el jugador principal
 		jugadorPrincipal = new Jugador(carrosSpriteSheet.getSubImage(dirrection, carColor),0,true);
 		jugadorPrincipal.setCoordY((int) (height-jugadorPrincipal.icon.getHeight()*jugadorPrincipal.scale));
-		jugadorPrincipal.setCoordX((int) (width-jugadorPrincipal.icon.getWidth()*jugadorPrincipal.scale/2));
+		//jugadorPrincipal.setCoordX((int) (width-jugadorPrincipal.icon.getWidth()*jugadorPrincipal.scale/2));
+		jugadorPrincipal.setCoordX((int) (width/2-jugadorPrincipal.icon.getWidth()*jugadorPrincipal.scale));
 		
 		//se crean los jugadores secundarios
 		jugadoresSec = new Jugador[] {
@@ -266,12 +268,17 @@ public class Play extends BasicGameState{
 		Image bg = new Image("res/bg.png");
 		Image bg2 = new Image("res/bg.png");
 		bg.draw(0, 0);
-		bg2.draw(768, 0);
+		bg2.draw(766, 0);
+		Image go = new Image("res/gameover.png");
+		go.draw(gameoverX, gameoverY);
 		
 		
 		Font font = new Font("Verdana", Font.BOLD, 30);
 		TrueTypeFont trueTypeFont = new TrueTypeFont(font, true);
-		trueTypeFont.drawString(20.0f,630.0f, String.valueOf(jugadorPrincipal.getSpeed()/2)+" KM/H", Color.black);
+		trueTypeFont.drawString(20.0f,630.0f, String.valueOf(jugadorPrincipal.getSpeed()/3)+" KM/H", Color.black);
+		
+		
+		trueTypeFont.drawString(870.0f,630.0f, "Vidas "+String.valueOf(jugadorPrincipal.vidas), Color.black);
 		
 		
 	}
@@ -279,14 +286,14 @@ public class Play extends BasicGameState{
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
 		Input input = gc.getInput();
-		System.out.println(jugadorPrincipal.getAceleracion());
+		//System.out.println(jugadorPrincipal.getAceleracion());
 		
 		int temp = jugadorPrincipal.getSpeed();
 		if(input.isKeyDown(Input.KEY_UP)) {
 			dirrection = 1;
 			jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() + temp);
 			if(jugadorPrincipal.getCoordX()<1950&&jugadorPrincipal.getCoordX()>-1950&&jugadorPrincipal.getAceleracion()<=2) {
-				jugadorPrincipal.increaseAceleracion(0.005f);
+				jugadorPrincipal.increaseAceleracion(0.03f);
 			
 			}
 		
@@ -301,7 +308,7 @@ public class Play extends BasicGameState{
 	
 			jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() + temp);
 			if(jugadorPrincipal.getAceleracion()>0) {
-				jugadorPrincipal.increaseAceleracion( - 0.01f);
+				jugadorPrincipal.increaseAceleracion( -0.03f);
 
 			}
 			if(jugadorPrincipal.getAceleracion()<0) {
@@ -337,6 +344,34 @@ public class Play extends BasicGameState{
 				jugador.setCoordY(0);
 				jugador.setCoordX(0);
 				jugador.scale=2f;
+			}
+		}
+		for(Sprite poder:poderes) {
+			if(jugadorPrincipal.getPosition()<poder.getPosition() && Math.abs(poder.getPosition()-jugadorPrincipal.getPosition())<7000) {
+				
+				float factor=(300-(float)(poder.getPosition()-jugadorPrincipal.getPosition())/segL)/(300);
+				poder.scale=1f*factor;
+				//poder.setCoordX(width/2);
+				System.out.println("/nPosicion poder: "+ poder.getPosition());
+				System.out.println("/nPosicion jugador: "+ jugadorPrincipal.getPosition());
+				
+				
+			}
+			else {
+			//if(Integer.compare(poder.getPosition(),jugadorPrincipal.getPosition())<0) {
+				poder.setCoordY(0);
+				poder.setCoordX(0);
+				poder.scale=1f;
+			}
+			System.out.println("Poder scale: "+poder.scale);
+		}
+		
+		if(jugadorPrincipal.vidas<=0) {
+			jugadorPrincipal.vidas=0;
+			//gameoverX=0;
+			//gameoverY=0;
+			while(true) {
+				
 			}
 		}
 		

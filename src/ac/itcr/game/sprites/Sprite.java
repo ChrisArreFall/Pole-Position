@@ -12,7 +12,7 @@ public abstract class Sprite {
 	public Image icon;	
 	public Boolean activo=false;
 	protected Integer coordX=0,coordY=0;
-	public Float scale=2f;
+	public Float scale=3f;
 	
 	
 	public synchronized Integer getCoordX() {
