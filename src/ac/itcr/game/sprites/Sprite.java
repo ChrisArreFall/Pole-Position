@@ -1,10 +1,10 @@
 package ac.itcr.game.sprites;
 
-import java.awt.Dimension;
+//import java.awt.Dimension;
 import java.awt.Rectangle;
 
 import org.newdawn.slick.*;
-import org.newdawn.slick.geom.Shape;
+//import org.newdawn.slick.geom.Shape;
 
 
 public abstract class Sprite {
