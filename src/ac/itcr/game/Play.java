@@ -8,7 +8,9 @@ import org.newdawn.slick.geom.Polygon;
 import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.state.*;
 import ac.itcr.game.sprites.*;
-
+import java.awt.Font;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.Graphics;
 
 public class Play extends BasicGameState{
 	public static Integer camH = 1500;
@@ -68,25 +70,27 @@ public class Play extends BasicGameState{
 		}
 		linesN = lines.size();
 		
-		Image poderesPng = new Image("res/types.png");
-		poderesSpriteSheet = new SpriteSheet(poderesPng,1080,160);
+		Image poderesPng = new Image("res/carros.png");
+		poderesSpriteSheet = new SpriteSheet(poderesPng,42,43);
 		
 		//se crean los poderes
 		poderes = new Sprite[]{
-			new Hueco(poderesSpriteSheet.getSubImage(0, 2),20000,true),
-			new Turbo(poderesSpriteSheet.getSubImage(0, 1),0,false),
-			new Vida(poderesSpriteSheet.getSubImage(0, 0),0,false),
+			new Hueco(poderesSpriteSheet.getSubImage(1, 6),0,false),
+			new Turbo(poderesSpriteSheet.getSubImage(1, 7),0,false),
+			new Vida(poderesSpriteSheet.getSubImage(1, 8),0,false),
 			
 		};
 		
 		//se crea el jugador principal
 		jugadorPrincipal = new Jugador(carrosSpriteSheet.getSubImage(dirrection, carColor),0,true);
+		jugadorPrincipal.setCoordY((int) (height-jugadorPrincipal.icon.getHeight()*jugadorPrincipal.scale));
+		jugadorPrincipal.setCoordX((int) (width-jugadorPrincipal.icon.getWidth()*jugadorPrincipal.scale/2));
 		
 		//se crean los jugadores secundarios
 		jugadoresSec = new Jugador[] {
 				new Jugador(carrosSpriteSheet.getSubImage(1, 1),0,true),
-				new Jugador(carrosSpriteSheet.getSubImage(1, 3),0,false),
-				new Jugador(carrosSpriteSheet.getSubImage(1, 5),0,false)				
+				new Jugador(carrosSpriteSheet.getSubImage(1, 2),0,false),
+				new Jugador(carrosSpriteSheet.getSubImage(1, 3),0,false)				
 		};
 		
 		sprites = new ArrayList<Sprite>();
@@ -136,9 +140,10 @@ public class Play extends BasicGameState{
 	
 				if(sprite.getClass()==Jugador.class) {
 					Jugador jugador= (Jugador)sprite;
-					jugador.aceleracion=1f;
+					jugador.setAceleracion(1f);
 					sprite.setPosition (sprite.getPosition()+ jugador.getSpeed());
-					//System.out.println("pos "+ sprite.getPosition());
+					
+				
 				}
 								
 				sprite.setCoordY((int)line.Y);
@@ -166,6 +171,8 @@ public class Play extends BasicGameState{
 		}
 		for (Jugador jugador : jugadoresSec) {
 			if(jugador.activo) {
+				//System.out.println("eneY "+jugador.getCoordY()+ " yo Y "+jugadorPrincipal.getCoordY());
+				//System.out.println("eneX "+jugador.getCoordX()+ " yo X "+jugadorPrincipal.getCoordX());
 				jugador.collided(jugadorPrincipal);
 			}
 		}
@@ -176,13 +183,8 @@ public class Play extends BasicGameState{
 	public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
 		gc.setTargetFrameRate(60);
 			
-		while(jugadorPrincipal.getPosition()>=linesN*segL) 
-			
-			jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() - linesN*segL);
-		
-		while(jugadorPrincipal.getPosition()<0)
-			
-			jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() + linesN*segL);
+		while(jugadorPrincipal.getPosition()>=linesN*segL) jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() - linesN*segL);
+		while(jugadorPrincipal.getPosition()<0)jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() + linesN*segL);
 		
 		int startPos = jugadorPrincipal.getPosition()/segL;
 		float x=0,dx=0;
@@ -242,20 +244,17 @@ public class Play extends BasicGameState{
 			
 		}
 		
+				
+		//jugador principal
+		jugadorPrincipal.icon=carrosSpriteSheet.getSubImage(dirrection, carColor);
+		jugadorPrincipal.icon.draw(width/2-(3*42/2),
+									height-jugadorPrincipal.icon.getHeight()*jugadorPrincipal.scale,
+									jugadorPrincipal.scale);
 		
 		//dibuja los poderes
 		for (Sprite poder : poderes) {
-			poder.icon.draw(poder.getCoordX()-500, poder.getCoordY(),1f);
+			poder.icon.draw(poder.getCoordX(), poder.getCoordY(),1f);
 		}
-		//dibuja los Huecos
-		for (Sprite poder : poderes) {
-			poder.icon.draw(poder.getCoordX()-500, poder.getCoordY(),1f);
-		}
-		//dibuja los Turbos
-		for (Sprite poder : poderes) {
-			poder.icon.draw(poder.getCoordX()-500, poder.getCoordY(),1f);
-		}
-				
 		
 		//dibuja los jugadores
 		for (Jugador jugadorSec : jugadoresSec) {
@@ -264,10 +263,15 @@ public class Play extends BasicGameState{
 			}
 		}
 
-		//jugador principal
-		jugadorPrincipal.icon=carrosSpriteSheet.getSubImage(dirrection, carColor);
-		jugadorPrincipal.icon.draw(width/2-(3*42/2), height-(43*3),3f);
-				
+		Image bg = new Image("res/bg.png");
+		Image bg2 = new Image("res/bg.png");
+		bg.draw(0, 0);
+		bg2.draw(768, 0);
+		
+		
+		Font font = new Font("Verdana", Font.BOLD, 30);
+		TrueTypeFont trueTypeFont = new TrueTypeFont(font, true);
+		trueTypeFont.drawString(20.0f,630.0f, String.valueOf(jugadorPrincipal.getSpeed()/2)+" KM/H", Color.black);
 		
 		
 	}
@@ -275,13 +279,14 @@ public class Play extends BasicGameState{
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
 		Input input = gc.getInput();
+		System.out.println(jugadorPrincipal.getAceleracion());
 		
 		int temp = jugadorPrincipal.getSpeed();
 		if(input.isKeyDown(Input.KEY_UP)) {
 			dirrection = 1;
 			jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() + temp);
-			if(jugadorPrincipal.getCoordX()<1950&&jugadorPrincipal.getCoordX()>-1950&&jugadorPrincipal.aceleracion<=2) {
-				jugadorPrincipal.aceleracion+=0.01f;
+			if(jugadorPrincipal.getCoordX()<1950&&jugadorPrincipal.getCoordX()>-1950&&jugadorPrincipal.getAceleracion()<=2) {
+				jugadorPrincipal.increaseAceleracion(0.005f);
 			
 			}
 		
@@ -290,17 +295,17 @@ public class Play extends BasicGameState{
 			dirrection = 1;
 			jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() - 200);
 		}
-		if((!input.isKeyDown(Input.KEY_UP)&&jugadorPrincipal.aceleracion!=0)||
+		if((!input.isKeyDown(Input.KEY_UP)&&jugadorPrincipal.getAceleracion()!=0)||
 				(jugadorPrincipal.getCoordX()>1950||jugadorPrincipal.getCoordX()<-1950)) {
 			dirrection = 1;
 	
 			jugadorPrincipal.setPosition(jugadorPrincipal.getPosition() + temp);
-			if(jugadorPrincipal.aceleracion>0) {
-				jugadorPrincipal.aceleracion-=0.13f;
+			if(jugadorPrincipal.getAceleracion()>0) {
+				jugadorPrincipal.increaseAceleracion( - 0.01f);
 
 			}
-			if(jugadorPrincipal.aceleracion<0) {
-				jugadorPrincipal.aceleracion=0f;
+			if(jugadorPrincipal.getAceleracion()<0) {
+				jugadorPrincipal.setAceleracion(0f);
 			}
 		}
 		
@@ -335,6 +340,7 @@ public class Play extends BasicGameState{
 			}
 		}
 		
+
 		
 	}
 

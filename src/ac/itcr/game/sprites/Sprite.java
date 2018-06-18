@@ -1,10 +1,10 @@
 package ac.itcr.game.sprites;
 
-//import java.awt.Dimension;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 
 import org.newdawn.slick.*;
-//import org.newdawn.slick.geom.Shape;
+import org.newdawn.slick.geom.Shape;
 
 
 public abstract class Sprite {
@@ -12,6 +12,8 @@ public abstract class Sprite {
 	public Image icon;	
 	public Boolean activo=false;
 	protected Integer coordX=0,coordY=0;
+	public Float scale=2f;
+	
 	
 	public synchronized Integer getCoordX() {
 		return coordX;
@@ -37,6 +39,7 @@ public abstract class Sprite {
 	
 	public Boolean checkCollision(Sprite jugadorPrincipal) {;
 		Rectangle rect= new Rectangle(coordX,coordY,icon.getWidth(), icon.getHeight());
+		//System.out.println("coordX "+coordX+ " coordY "+coordY);
 		
 		Rectangle rect2= new Rectangle(jugadorPrincipal.coordX,jugadorPrincipal.coordY,
 				jugadorPrincipal.icon.getWidth(), jugadorPrincipal.icon.getHeight());
